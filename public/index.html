@@ -7,6 +7,7 @@
     }
   </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </head>
 <body>
@@ -19,9 +20,55 @@
         <button type="submit" class="btn btn-primary">Send</button>
     </form>
   </div>
-  <div>
+  <div class="message">
     Message from server : <span id='message'></span>
   </div>
+
+  <div class="menu">
+    <a href="#" onclick="showItems('home')" >
+      <img src="https://www.unm.edu/~skomarav/home.png"</img>
+    </a>
+    
+    <a href="#" onclick="showItems('scenes')">
+      <img src="https://www.unm.edu/~skomarav/scene.png"</img>
+    </a>   
+
+    <a href="#" onclick="showItems('settings')">
+      <img src="https://www.unm.edu/~skomarav/settings.png"</img>
+    </a>
+    
+    <a href="#" onclick="showItems('info')">
+      <img src="https://www.unm.edu/~skomarav/info.png"</img>
+    </a>    
+
+    <br>
+    
+    <li id="homeTxt" class="display" style="margin-left:30px; width: 160px">Home</li>
+    <li id="scenesTxt" class="no-display" style="margin-left:240px;">Scenes</li>
+    <li id="settingsTxt" class="no-display" style="margin-left:460px;">Settings</li>
+    <li id="infoTxt" class="no-display" style="margin-left:720px; width: 120px">Info</li>
+  </div>
+
+  <div id="home" class="show">
+    <button onclick="btnClick('Next')" class="click">Next</button>
+    <button onclick="btnClick('Prev')" class="click">Prev</button>
+    <button onclick="btnClick('Refresh')" class="click">Refresh</button>
+  </div>
+  <div id="scenes" class="hide">
+    <button onclick="btnClick('Scene 1')" class="select">Scene 1</button>
+      <button onclick="btnClick('1')" class="select no-display">1</button>
+      <button onclick="btnClick('2')" class="select no-display">2</button>
+      <button onclick="btnClick('3')" class="select no-display">3</button>
+    <button onclick="btnClick('Scene 2')" class="select">Scene 2</button>
+    <button onclick="btnClick('Scene 3')" class="select">Scene 3</button>
+  </div>
+  <div id="settings" class="hide">
+    <img src="https://www.unm.edu/~skomarav/settings.png"</img>
+  </div>
+  <div id="info" class="hide">
+    <img src="https://www.unm.edu/~skomarav/info.png"</img>
+  </div>
+
 
   <script>
 
@@ -42,8 +89,46 @@
           ws.send(message);
           e.preventDefault();
       });
-  </script>
 
+      var values = ["home", "scenes", "settings", "info"];
+      var ids = ["#homeTxt", "#scenesTxt", "#settingsTxt", "#infoTxt"];
+      var tabs = ["#home", "#scenes", "#settings", "#info"];
+
+      function btnClick(message){
+        console.log(ws, message);
+        ws.send(message);
+      }
+
+      // ids have display and no-display and tabs have
+      // hide and show because css hates me
+      function showItems(str){
+        for(var i in values){
+          if(str == values[i]){
+            if($(ids[i]).hasClass("no-display")){
+              $(ids[i]).removeClass("no-display");
+            }
+            $(ids[i]).addClass("display");
+
+            if($(tabs[i]).hasClass("hide")){
+              $(tabs[i]).removeClass("hide");
+            }
+            $(tabs[i]).addClass("show");  
+          }
+          else{
+            if($(ids[i]).hasClass("display")){
+              $(ids[i]).removeClass("display");
+            }
+            $(ids[i]).addClass("no-display");
+
+            if($(tabs[i]).hasClass("show")){
+              $(tabs[i]).removeClass("show");
+            }
+            $(tabs[i]).addClass("hide");
+          }
+        }          
+      }
+  </script>
+  
 
 </body>
 </html>

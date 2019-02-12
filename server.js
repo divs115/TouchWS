@@ -9,11 +9,13 @@ var app = express(),
     wss = new webSocket.Server({ server:server });
 
 // client connections
-var connects = []
+var connects = [];
+
+app.use(express.static(path.join(__dirname, '/public')));
+
 
 // --------------------------------------------------------------
 
-app.use(express.static(path.join(__dirname, '/public')));
 
 // Called when success building connection
 wss.on('connection', function (ws, req) {
@@ -22,16 +24,23 @@ wss.on('connection', function (ws, req) {
     var initMessage = {message:"connection"};
     ws.send(JSON.stringify(initMessage));
     connects.push(ws);
-    console.log("New Client Connected : " + connects.length);
+    // console.log("New Client Connected : " + connects.length);
+    var ip = req.connection.remoteAddress;
+    console.log('connection', ip);
 
     // Callback from client message
     ws.on('message', function (message) {
         console.log('received: %s', message);
-        broadcast(message);  // Return to client
+        // broadcast(message);  // Return to client
+        wss.clients.forEach(function each(client) {
+          if (client !== ws && client.readyState === webSocket.OPEN) {
+            client.send(message);
+          }
+        });
     });
 
     ws.on('close', function () {
-        console.log('A Client Leave');
+        console.log('A Client Left');
         connects = connects.filter(function (conn, i) {
             return (conn === ws) ? false : true;
         });
